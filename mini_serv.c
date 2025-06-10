@@ -6,13 +6,13 @@
 
 int serverSocket = -1, maxSockets = 0, next_id = 0;
 int clients[65536], currentMessage[65536];
-char bufferRead[4096 + 42], bufferWrite[4096 * 42 + 42], bufferWriteMessage[2096 + 42];
+char bufferRead[4096 * 42], bufferWrite[4096 * 42 + 42], bufferWriteMessage[4096 * 42];
 fd_set readSockets, writeSockets, activeSockets;
 
 void sendMessage(int sender)
 {
-    for (int i = 0; i <= maxSockets, i++)
-        if (IF_ISSET(i, &writeSockets) && i != sender)
+    for (int i = 0; i <= maxSockets; i++)
+        if (FD_ISSET(i, &writeSockets) && i != sender)
             send(i, bufferWrite, strlen(bufferWrite), 0);
 }
 
@@ -32,16 +32,16 @@ int main(int argc, char **argv)
     }
 
     serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    struct socketaddr_in serverAddr;
+    struct sockaddr_in serverAddr;
     socklen_t len;
 
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_sddr.s_sddr = htonl(2130706433);
-    serverAddr.sin_port = htons(sizeof(argv[1]));
+    serverAddr.sin_addr.s_addr = htonl(2130706433);
+    serverAddr.sin_port = htons(atoi(argv[1]));
 
     if (serverSocket < 0)
         fatal();
-    if ((bind(serverSocket, (const struct socketaddr *) &serverAddr, sizeof(serverAddr))) < 0)
+    if ((bind(serverSocket, (const struct sockaddr *) &serverAddr, sizeof(serverAddr))) < 0)
         fatal();
     if (listen(serverSocket,128) < 0)
         fatal();
@@ -56,13 +56,13 @@ int main(int argc, char **argv)
         readSockets = writeSockets = activeSockets;
         if (select(maxSockets + 1, &readSockets, &writeSockets, NULL, NULL) <= 0)
             continue;
-        for(int socketId = 0, socketId <= maxSockets, socketId++)
+        for(int socketId = 0; socketId <= maxSockets; socketId++)
         {
             if (FD_ISSET(socketId, &readSockets))
             {
                 if (serverSocket == socketId)
                 {
-                    int clientSocket = accept(serverSocket, (struct socketaddr *) &serverAddr, &len);
+                    int clientSocket = accept(serverSocket, (struct sockaddr *) &serverAddr, &len);
                     if (clientSocket < 0)
                         continue;
                     FD_SET(clientSocket, &activeSockets);
@@ -73,32 +73,32 @@ int main(int argc, char **argv)
                     sendMessage(clientSocket);
                     break;
                 }
-                else
-                {
-                    if ()
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        for()
-                        {
-                            if ()
-                            {
-                                if ()
+                // else
+                // {
+                //     if ()
+                //     {
+                //         break;
+                //     }
+                //     else
+                //     {
+                //         for()
+                //         {
+                //             if ()
+                //             {
+                //                 if ()
 
-                                else
-                            }
-                            else if ()
-                            {
-                                if ()
+                //                 else
+                //             }
+                //             else if ()
+                //             {
+                //                 if ()
 
-                                else
-                                break;
-                            }
-                        }
-                    }
-                }
+                //                 else
+                //                 break;
+                //             }
+                //         }
+                //     }
+                // }
             }
         }
     }
